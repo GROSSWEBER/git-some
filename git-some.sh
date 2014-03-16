@@ -19,6 +19,12 @@ set -o pipefail
 # Default to 1 commit unless specified otherwise.
 commit_count=${1-1}
 
+if [ "$(echo $commit_count | grep -v "^[[:digit:]]*$")" -o "$($commit_count -lt 0 2> /dev/null)" ]
+then
+  echo "Need a positive number for number of commits to generate, got: $commit_count"
+  exit 1
+fi
+
 for ((commit = 1; commit <= $commit_count; commit++))
 do
   # Try to find an untaken file between 0 and 99.
