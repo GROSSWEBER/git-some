@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Fail script if something goes wrong.
+set -o errexit
+
 pushd `dirname $0` > /dev/null
 BIN_DIR=`pwd`
 popd > /dev/null
