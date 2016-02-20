@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Fail script if something goes wrong.
-set -o errexit
+script_dir="$(pwd)"
 
-pushd `dirname $0` > /dev/null
-BIN_DIR=`pwd`
-popd > /dev/null
-
-git config --global alias.some "!sh -c \"'$BIN_DIR/git-some.sh' \$1\""
-echo 'git-some successfully installed.'
-echo 'You can now use "git some".'
+git config --global alias.some "!'$script_dir/git-some.sh'"
+if [[ $? -eq 0 ]]; then
+  echo git-some successfully installed from $script_dir.
+  echo You can now use:
+  echo
+  echo '  git some [number of commits]'
+else
+  >&2 echo git-some installation unsuccessful from $script_dir.
+  exit 1
+fi
