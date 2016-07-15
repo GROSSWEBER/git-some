@@ -27,8 +27,16 @@ for ((commit = 1; commit <= $commit_count; commit++)); do
     [[ -f "$filename" ]] || break
   done
 
+  # Create file.
   echo contents for $filename > "$filename"
-  git add -- "$filename"
+
+  # Stage file.
+  if ! git add -- "$filename"; then
+    rm -f "$filename"
+    exit 2
+  fi
+
+  # Commit
   git commit --message "commit message for $filename"
 
   echo
