@@ -12,8 +12,7 @@ Somewhere on your machine (preferrably your home directory), execute the followi
 
 ```
 $ git clone https://github.com/GROSSWEBER/git-some.git
-$ cd git-some
-$ ./install.sh
+$ git-some/install.sh
 ```
 
 `install.sh` will set up the `git some` alias for you.
