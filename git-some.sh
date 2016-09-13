@@ -4,6 +4,8 @@
 #
 # USAGE: git-some.sh <number of commits to generate>
 
+# MY IMPORTANT FIX
+
 # Fail script if something goes wrong.
 set -o errexit
 
