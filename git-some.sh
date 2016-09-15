@@ -13,16 +13,25 @@ set -o nounset
 # Default to 1 commit unless specified otherwise.
 commit_count=${1-1}
 
+# Limit to 100 files
+commit_limit=100
+
 if grep --quiet --invert-match '^[[:digit:]]*$' <<< $commit_count; then
   >&2 echo Need a positive number for number of commits to generate, got: $commit_count
   exit 1
 fi
 
+ccount=$(find . -maxdepth 1 -name "file-??.txt" | wc --lines)
+if [[ $(($ccount + $commit_count)) -gt $commit_limit ]]; then
+  >&2 echo Can not create that many files!
+  exit 3
+fi
+
 for ((commit = 1; commit <= $commit_count; commit++)); do
-  # Try to find an untaken file between 0 and 99.
+  # Try to find an untaken file between 0 and ($commit_limit -1).
   while true; do
-    up_to_100=$(($RANDOM % 100))
-    filename=$(printf file-%02d.txt $up_to_100)
+    up_to_limit=$(($RANDOM % $commit_limit))
+    filename=$(printf file-%02d.txt $up_to_limit)
 
     [[ -f "$filename" ]] || break
   done
