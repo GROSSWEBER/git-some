@@ -54,7 +54,10 @@ for ((commit = 1; commit <= $commit_count; commit++)); do
   fi
 
   # Commit
-  git commit --message "commit message for $filename"
+  if ! git commit --message "commit message for $filename"; then
+    git rm --force "$filename" > /dev/null
+    exit 4
+  fi
 
   echo
 done
