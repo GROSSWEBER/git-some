@@ -19,15 +19,15 @@ if grep --quiet --invert-match '^[[:digit:]]*$' <<< $commit_count; then
 fi
 
 for ((commit = 1; commit <= $commit_count; commit++)); do
-  # Try to find an untaken file between 0 and 99.
-  while true; do
-    up_to_100=$(($RANDOM % 100))
-    filename=$(printf file-%02d.txt $up_to_100)
-
-    [[ -f "$filename" ]] || break
-  done
-
-  # Create file.
+  # instead of finding a file between 0 and 99 
+  # we can also use mktemp to generate a uniq filename
+  # this should be much faster and it will also works for more
+  # than 100 files
+  
+  # Create file in current directory with 8 random characters
+  filename=$(mktemp -p . git-some.XXXXXXXX)
+  
+  # fill the file with some content
   echo contents for $filename > "$filename"
 
   # Stage file.
