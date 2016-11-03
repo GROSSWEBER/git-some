@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script_dir="$(dirname $(realpath $0))"
+script_dir="$(dirname "$(realpath "$0")")"
 
 git config --global alias.some "!'$script_dir/git-some.sh'"
 if [[ $? -eq 0 ]]; then
