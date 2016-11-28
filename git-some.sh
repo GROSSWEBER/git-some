@@ -29,7 +29,7 @@ for ((i = 1; i <= $placeholder_length; i++)); do
 done
 search_pattern=file-$search_pattern.txt
 
-file_count=$(find . -maxdepth 1 -name "$search_pattern" | wc --lines)
+file_count=$(find . -maxdepth 1 -name "$search_pattern" | wc -l)
 if [[ $(($file_count + $commit_count)) -gt $commit_limit ]]; then
   >&2 echo Cannot create $commit_count file\(s\). $commit_limit file\(s\) are permitted and $file_count file\(s\) have already been created. $(($commit_limit - $file_count)) file\(s\) left.
   exit 3
