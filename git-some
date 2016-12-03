@@ -2,7 +2,7 @@
 #
 # Generates git commits using randomly-named files, one file per commit.
 #
-# USAGE: git-some.sh <number of commits to generate>
+# USAGE: git-some <number of commits to generate>
 
 # Fail script if something goes wrong.
 set -o errexit
