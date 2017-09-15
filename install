@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  script_dir="$(perl -e 'use Cwd "abs_path"; print abs_path(shift)' "$0")"
-else
+if hash realpath 2> /dev/null; then
   script_dir="$(realpath "$0")"
+else
+  script_dir="$(perl -e 'use Cwd "abs_path"; print abs_path(shift)' "$0")"
 fi
 
 if [[ $? != 0 ]]; then
