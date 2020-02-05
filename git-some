@@ -10,19 +10,60 @@ set -o errexit
 # Treat unset variables as an error, and immediately exit.
 set -o nounset
 
-# Default to 1 commit unless specified otherwise.
-commit_count=${1-1}
+options="\
+%s
+%s [number of commits]
+%s [--message=<prefix>] [number of commits]
+
+Create a number of random commits. By default, one commit is created.
+
+Every commit will create a file with a random name. The file name pattern
+is 'file-XX.txt', where 'XX' is a randomly generated number between 0 and 99.
+
+Optionally you can define a commit message prefix using the --message switch.
+--
+h,help          Show the help
+m,message=prefix An optional commit message prefix"
+
+# shellcheck disable=SC2059
+printf -v options "$options" "${0##*/}" "${0##*/}" "${0##*/}"
+
+eval "$(git rev-parse --parseopt -- "$@" <<< "$options" || echo exit $?)"
+
+while (($# > 0)); do
+  opt="$1"
+  shift
+
+  case "$opt" in
+    -m)
+      message="$1"
+      shift
+      ;;
+
+    --)
+      # Default to 1 commit unless specified otherwise.
+      commit_count="${1-1}"
+
+      if ! [[ "$commit_count" =~ ^[0-9]+$ ]]; then
+        >&2 printf 'Need a positive number for number of commits to generate, got: %s\n' \
+                   "$commit_count"
+
+        exit 1
+      fi
+
+      break
+      ;;
+
+    *)
+      >&2 printf 'Unexpected option: %s\n' "$opt"
+      exit 1
+      ;;
+  esac
+done
 
 # Limit to 100 files (file-00.txt to file-99.txt).
 commit_limit=100
 max_index=$((commit_limit - 1))
-
-if ! [[ "$commit_count" =~ ^[0-9]+$ ]]; then
-  >&2 printf 'Need a positive number for number of commits to generate, got: %s\n' \
-    "$commit_count"
-
-  exit 1
-fi
 
 placeholder_length=${#max_index}
 printf -v search_pattern '%*s' "$placeholder_length" ''
@@ -61,7 +102,7 @@ for ((commit = 1; commit <= commit_count; commit++)); do
   fi
 
   # Create commit.
-  if ! git commit --message "commit message for $filename"; then
+  if ! git commit --message "${message-commit message for} $filename"; then
     git rm --force -- "$filename" > /dev/null
     exit 4
   fi

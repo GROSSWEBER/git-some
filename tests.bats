@@ -66,8 +66,8 @@ teardown() {
 @test 'number of commits is negative' {
   run "$cwd/git-some" -1
 
-  assert_failure 1
-  assert_line 'Need a positive number for number of commits to generate, got: -1'
+  assert_failure 129
+  assert_line "error: unknown switch \`1'"
 }
 
 @test 'number of commits is a character' {
@@ -94,7 +94,9 @@ teardown() {
 @test 'git add fails' {
   git init
 
-  stub git 'add : exit 1'
+  stub git \
+       "rev-parse : echo set -- --" \
+       'add : exit 1'
 
   run "$cwd/git-some"
 
@@ -112,6 +114,7 @@ teardown() {
   git="$(which git)"
 
   stub git \
+       "rev-parse : echo set -- --" \
        "add : '$git' add ." \
        'commit : exit 1' \
        "rm : '$git' rm --force -- file-*.txt"
@@ -122,4 +125,24 @@ teardown() {
 
   # There should be no leftovers.
   refute [ -f file-*.txt ]
+}
+
+@test 'default commit message prefix' {
+  git init
+  "$cwd/git-some" 2
+
+  run git log --oneline --format=%s
+
+  assert_success
+  assert_line --partial 'commit message for file-'
+}
+
+@test 'custom commit message prefix' {
+  git init
+  "$cwd/git-some" --message 'some prefix' 2
+
+  run git log --oneline --format=%s
+
+  assert_success
+  assert_line --partial 'some prefix file-'
 }
