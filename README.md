@@ -1,5 +1,7 @@
 # git-some
 
+[![Build Status](https://travis-ci.org/GROSSWEBER/git-some.svg?branch=master)](https://travis-ci.org/GROSSWEBER/git-some)
+
 A little helper script to quickly generate git commits.
 
 ## Usage

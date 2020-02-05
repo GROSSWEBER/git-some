@@ -1,0 +1,19 @@
+language: minimal
+
+services:
+  - docker
+
+script: >-
+  docker run \
+         --rm \
+         --volume "$PWD:/code:ro" \
+         bash:$_BASH_VERSION \
+         sh -c 'apk add bats git &&
+                bash --version &&
+                cd /code &&
+                ./tests.bats'
+
+env:
+  - _BASH_VERSION=4.3
+  - _BASH_VERSION=4.4
+  - _BASH_VERSION=5

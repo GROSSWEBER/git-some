@@ -28,6 +28,8 @@ teardown() {
 
 @test 'no arguments' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
 
   run "$cwd/git-some"
 
@@ -38,6 +40,8 @@ teardown() {
 
 @test 'number of commits' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
 
   run "$cwd/git-some" 2
 
@@ -55,6 +59,8 @@ teardown() {
 
 @test 'number of commits would create more than 100 files' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
   "$cwd/git-some" 2
 
   run "$cwd/git-some" 100
@@ -93,6 +99,8 @@ teardown() {
 
 @test 'git add fails' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
 
   stub git \
        "rev-parse : echo set -- --" \
@@ -108,6 +116,8 @@ teardown() {
 
 @test 'git commit fails' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
 
   # Need to reimplement with system git here, because the git stub cannot
   # delegate to it.
@@ -129,6 +139,8 @@ teardown() {
 
 @test 'default commit message prefix' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
   "$cwd/git-some" 2
 
   run git log --oneline --format=%s
@@ -139,6 +151,8 @@ teardown() {
 
 @test 'custom commit message prefix' {
   git init
+  git config --local user.name test
+  git config --local user.email test@example.com
   "$cwd/git-some" --message 'some prefix' 2
 
   run git log --oneline --format=%s
