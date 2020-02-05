@@ -112,9 +112,9 @@ teardown() {
   git="$(which git)"
 
   stub git \
-    "add : '$git' add ." \
-    'commit : exit 1' \
-    "rm : '$git' rm --force file-*.txt"
+       "add : '$git' add ." \
+       'commit : exit 1' \
+       "rm : '$git' rm --force -- file-*.txt"
 
   run "$cwd/git-some"
 
