@@ -15,7 +15,7 @@ exist yet.
 
 ## Installation
 
-Somewhere on your machine (preferrably your home directory), execute the
+Somewhere on your machine (preferably your home directory), execute the
 following commands:
 
 ```sh
