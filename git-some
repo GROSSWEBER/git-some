@@ -18,8 +18,9 @@ options="\
 Create a number of random commits. By default, one commit is created.
 
 Every commit will create a file with a random name. The file name pattern
-is 'file-XX.txt', where 'XX' is a randomly generated number between 0 and 99.
+is \"file-XX.txt\", where \"XX\" is a randomly generated number between 0 and 99.
 
+The commit message includes the current branch name (or \"detached HEAD\").
 Optionally you can define a commit message prefix using the --message switch.
 --
 h,help          Show the help
@@ -83,6 +84,10 @@ if ((file_count + commit_count >= max_index)); then
   exit 3
 fi
 
+if [[ ! -v message ]]; then
+  message="$(git symbolic-ref --quiet --short HEAD || printf 'detached HEAD')"
+fi
+
 for ((commit = 1; commit <= commit_count; commit++)); do
   # Try to find an untaken file between 0 and ($commit_limit - 1).
   while true; do
@@ -102,7 +107,7 @@ for ((commit = 1; commit <= commit_count; commit++)); do
   fi
 
   # Create commit.
-  if ! git commit --message "${message-commit message for} $filename"; then
+  if ! git commit --message "$message: $filename"; then
     git rm --force -- "$filename" > /dev/null
     exit 4
   fi

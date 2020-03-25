@@ -104,6 +104,7 @@ teardown() {
 
   stub git \
        "rev-parse : echo set -- --" \
+       "symbolic-ref : echo master" \
        'add : exit 1'
 
   run "$cwd/git-some"
@@ -125,6 +126,7 @@ teardown() {
 
   stub git \
        "rev-parse : echo set -- --" \
+       "symbolic-ref : echo master" \
        "add : '$git' add ." \
        'commit : exit 1' \
        "rm : '$git' rm --force -- file-*.txt"
@@ -137,16 +139,43 @@ teardown() {
   refute [ -f file-*.txt ]
 }
 
-@test 'default commit message prefix' {
+@test 'default commit message prefix on master' {
   git init
   git config --local user.name test
   git config --local user.email test@example.com
-  "$cwd/git-some" 2
+  "$cwd/git-some"
 
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'commit message for file-'
+  assert_line --partial 'master: file-'
+}
+
+@test 'default commit message prefix on topic' {
+  git init
+  git config --local user.name test
+  git config --local user.email test@example.com
+  git checkout -b topic
+  "$cwd/git-some"
+
+  run git log --oneline --format=%s
+
+  assert_success
+  assert_line --partial 'topic: file-'
+}
+
+@test 'default commit message prefix in detached HEAD state' {
+  git init
+  git config --local user.name test
+  git config --local user.email test@example.com
+  "$cwd/git-some"
+  git checkout --detach
+  "$cwd/git-some"
+
+  run git log --oneline --format=%s
+
+  assert_success
+  assert_line --partial 'detached HEAD: file-'
 }
 
 @test 'custom commit message prefix' {
@@ -158,5 +187,5 @@ teardown() {
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'some prefix file-'
+  assert_line --partial 'some prefix: file-'
 }
