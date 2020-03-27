@@ -28,3 +28,31 @@ $ ./install
 ```
 
 `install` will set up the `git some` alias for you.
+
+## Example
+
+```sh
+$ mkdir git-some-test
+
+$ cd git-some-test
+
+$ git init
+Initialized empty Git repository in <somewhere>/git-some-test/.git/
+
+$ git some 2 && \
+  git checkout -b topic && \
+  git some 3 && \
+  git checkout - && \
+  git-some
+[master (root-commit) c540e60] master: file-A.txt
+...
+
+$ git log --oneline --graph --all
+* 90ace40 (HEAD -> master) master: file-F.txt
+| * 94042dd (topic) topic: file-E.txt
+| * 8eb1751 topic: file-D.txt
+| * 2c4b9f0 topic: file-C.txt
+|/
+* 644d9b9 master: file-B.txt
+* c540e60 master: file-A.txt
+```
