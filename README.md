@@ -9,7 +9,7 @@ A little helper script to quickly generate git commits.
 `git some [number of commits]` will generate `number of commits` commits in the
 current directory.
 
-Every commit creates one file named `file-x.txt`, where `x` is a string
+Every commit creates one file named `<x>.txt`, where `x` is a string
 representing the current commit number, from `A` to `Z` and `AA` to `ZZ`, etc.
 
 If you omit `number of commits`, `git some` will default to generate one commit.
@@ -68,15 +68,15 @@ $ git some 2 && \
   git some 3 && \
   git checkout - && \
   git-some
-[master (root-commit) c540e60] master: file-A.txt
+[master (root-commit) c540e60] master: A.txt
 ...
 
 $ git log --oneline --graph --all
-* 90ace40 (HEAD -> master) master: file-F.txt
-| * 94042dd (topic) topic: file-E.txt
-| * 8eb1751 topic: file-D.txt
-| * 2c4b9f0 topic: file-C.txt
+* 90ace40 (HEAD -> master) master: F.txt
+| * 94042dd (topic) topic: E.txt
+| * 8eb1751 topic: D.txt
+| * 2c4b9f0 topic: C.txt
 |/
-* 644d9b9 master: file-B.txt
-* c540e60 master: file-A.txt
+* 644d9b9 master: B.txt
+* c540e60 master: A.txt
 ```

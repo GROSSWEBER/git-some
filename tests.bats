@@ -35,7 +35,7 @@ teardown() {
 
   assert_success
   assert_line --partial --index 0 '[master (root-commit)'
-  assert [ -f file-A.txt ]
+  assert [ -f A.txt ]
 }
 
 @test 'number of commits' {
@@ -48,8 +48,8 @@ teardown() {
   assert_success
   assert_line --partial --index 0 '[master (root-commit)'
   assert_line --partial --index 3 '[master '
-  assert [ -f file-A.txt ]
-  assert [ -f file-B.txt ]
+  assert [ -f A.txt ]
+  assert [ -f B.txt ]
 }
 
 @test 'number of commits is larger than can be represented by a single character' {
@@ -60,7 +60,7 @@ teardown() {
   run "$cwd/git-some" $((26 + 1))
 
   assert_success
-  assert [ -f file-AA.txt ]
+  assert [ -f AA.txt ]
 }
 
 @test 'number of commits is much larger than can be represented by a single character' {
@@ -71,7 +71,7 @@ teardown() {
   run "$cwd/git-some" 100
 
   assert_success
-  assert [ -f file-CV.txt ]
+  assert [ -f CV.txt ]
 }
 
 @test 'number of commits is negative' {
@@ -107,12 +107,12 @@ teardown() {
   git config --local user.name test
   git config --local user.email test@example.com
 
-  touch file-A.txt
+  touch A.txt
 
   run "$cwd/git-some"
 
   assert_failure 1
-  assert_line 'file-A.txt already exists but it should not.'
+  assert_line 'A.txt already exists but it should not.'
 }
 
 @test 'git add fails' {
@@ -131,7 +131,7 @@ teardown() {
   assert_failure 2
 
   # There should be no leftovers.
-  refute [ -f file-*.txt ]
+  refute [ -f *.txt ]
 }
 
 @test 'git commit fails' {
@@ -149,14 +149,14 @@ teardown() {
        "rev-list : echo 0" \
        "add : '$git' add ." \
        'commit : exit 1' \
-       "rm : '$git' rm --force -- file-*.txt"
+       "rm : '$git' rm --force -- *.txt"
 
   run "$cwd/git-some"
 
   assert_failure 4
 
   # There should be no leftovers.
-  refute [ -f file-*.txt ]
+  refute [ -f *.txt ]
 }
 
 @test 'default commit message prefix on master' {
@@ -168,7 +168,7 @@ teardown() {
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'master: file-'
+  assert_line --partial 'master: '
 }
 
 @test 'default commit message prefix on topic' {
@@ -181,7 +181,7 @@ teardown() {
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'topic: file-'
+  assert_line --partial 'topic: '
 }
 
 @test 'default commit message prefix in detached HEAD state' {
@@ -195,7 +195,7 @@ teardown() {
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'detached HEAD: file-'
+  assert_line --partial 'detached HEAD: '
 }
 
 @test 'custom commit message prefix' {
@@ -207,5 +207,5 @@ teardown() {
   run git log --oneline --format=%s
 
   assert_success
-  assert_line --partial 'some prefix: file-'
+  assert_line --partial 'some prefix: '
 }

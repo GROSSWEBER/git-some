@@ -17,7 +17,7 @@ options="\
 
 Create a number of random commits. By default, one commit is created.
 
-Every commit creates one file named \"file-x.txt\", where \"x\" is a string
+Every commit creates one file named \"<x>.txt\", where \"x\" is a string
 representing the current commit number, from \"A\" to \"Z\" and \"AA\" to
 \"ZZ\", etc.
 
@@ -88,7 +88,7 @@ number-to-string() {
 get-filename() {
   local number="${1?Need commit number}"
 
-  printf -v filename "file-%s.txt" "$(number-to-string "$number")"
+  printf -v filename "%s.txt" "$(number-to-string "$number")"
 
   if [[ -f "$filename" ]]; then
     >&2 printf '%s already exists but it should not.\n' "$filename"
