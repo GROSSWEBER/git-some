@@ -35,7 +35,7 @@ teardown() {
 
   assert_success
   assert_line --partial --index 0 '[master (root-commit)'
-  assert [ -f file-??.txt ]
+  assert [ -f file-A.txt ]
 }
 
 @test 'number of commits' {
@@ -48,25 +48,30 @@ teardown() {
   assert_success
   assert_line --partial --index 0 '[master (root-commit)'
   assert_line --partial --index 3 '[master '
+  assert [ -f file-A.txt ]
+  assert [ -f file-B.txt ]
 }
 
-@test 'number of commits > 100' {
-  run "$cwd/git-some" 101
-
-  assert_failure 3
-  assert_line 'Cannot create 101 file(s). 100 file(s) are permitted and 0 file(s) have already been created. 100 file(s) left.'
-}
-
-@test 'number of commits would create more than 100 files' {
+@test 'number of commits is larger than can be represented by a single character' {
   git init
   git config --local user.name test
   git config --local user.email test@example.com
-  "$cwd/git-some" 2
+
+  run "$cwd/git-some" $((26 + 1))
+
+  assert_success
+  assert [ -f file-AA.txt ]
+}
+
+@test 'number of commits is much larger than can be represented by a single character' {
+  git init
+  git config --local user.name test
+  git config --local user.email test@example.com
 
   run "$cwd/git-some" 100
 
-  assert_failure 3
-  assert_line 'Cannot create 100 file(s). 100 file(s) are permitted and 2 file(s) have already been created. 98 file(s) left.'
+  assert_success
+  assert [ -f file-CV.txt ]
 }
 
 @test 'number of commits is negative' {
@@ -97,6 +102,19 @@ teardown() {
   assert_line 'Need a positive number for number of commits to generate, got: 42a'
 }
 
+@test 'file to generate already exists' {
+  git init
+  git config --local user.name test
+  git config --local user.email test@example.com
+
+  touch file-A.txt
+
+  run "$cwd/git-some"
+
+  assert_failure 1
+  assert_line 'file-A.txt already exists but it should not.'
+}
+
 @test 'git add fails' {
   git init
   git config --local user.name test
@@ -105,6 +123,7 @@ teardown() {
   stub git \
        "rev-parse : echo set -- --" \
        "symbolic-ref : echo master" \
+       "rev-list : echo 0" \
        'add : exit 1'
 
   run "$cwd/git-some"
@@ -127,6 +146,7 @@ teardown() {
   stub git \
        "rev-parse : echo set -- --" \
        "symbolic-ref : echo master" \
+       "rev-list : echo 0" \
        "add : '$git' add ." \
        'commit : exit 1' \
        "rm : '$git' rm --force -- file-*.txt"

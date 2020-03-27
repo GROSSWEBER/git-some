@@ -17,8 +17,9 @@ options="\
 
 Create a number of random commits. By default, one commit is created.
 
-Every commit will create a file with a random name. The file name pattern
-is \"file-XX.txt\", where \"XX\" is a randomly generated number between 0 and 99.
+Every commit creates one file named \"file-x.txt\", where \"x\" is a string
+representing the current commit number, from \"A\" to \"Z\" and \"AA\" to
+\"ZZ\", etc.
 
 The commit message includes the current branch name (or \"detached HEAD\").
 Optionally you can define a commit message prefix using the --message switch.
@@ -62,40 +63,49 @@ while (($# > 0)); do
   esac
 done
 
-# Limit to 100 files (file-00.txt to file-99.txt).
-commit_limit=100
-max_index=$((commit_limit - 1))
+number-to-string() {
+  local num="${1?Need number}"
+  local chars=({A..Z})
+  local base=${#chars[@]}
+  local stack=()
+  local index
 
-placeholder_length=${#max_index}
-printf -v search_pattern '%*s' "$placeholder_length" ''
-search_pattern="file-${search_pattern// /?}.txt"
+  while ((num >= 0)); do
+    if ((num < base)); then
+      stack+=("$(printf '%s' "${chars[num]}")")
+    else
+      stack+=("$(printf '%s' "${chars[$((num % base))]}")")
+    fi
 
-shopt -s nullglob
-# shellcheck disable=SC2206
-files=($search_pattern)
-file_count=${#files[@]}
-if ((file_count + commit_count >= max_index)); then
-  >&2 printf 'Cannot create %s file(s). %s file(s) are permitted and %s file(s) have already been created. %s file(s) left.\n' \
-             "$commit_count" \
-             "$commit_limit" \
-             "$file_count" \
-             "$((commit_limit - file_count))"
+    num=$((num / base - 1))
+  done
 
-  exit 3
-fi
+  for ((index = ${#stack[@]} - 1; index >= 0; index--)); do
+    printf '%s' "${stack[index]}"
+  done
+}
+
+get-filename() {
+  local number="${1?Need commit number}"
+
+  printf -v filename "file-%s.txt" "$(number-to-string "$number")"
+
+  if [[ -f "$filename" ]]; then
+    >&2 printf '%s already exists but it should not.\n' "$filename"
+    return 1
+  fi
+
+  printf '%s' "$filename"
+}
 
 if [[ ! -v message ]]; then
   message="$(git symbolic-ref --quiet --short HEAD || printf 'detached HEAD')"
 fi
 
-for ((commit = 1; commit <= commit_count; commit++)); do
-  # Try to find an untaken file between 0 and ($commit_limit - 1).
-  while true; do
-    number=$((RANDOM % commit_limit))
-    printf -v filename "file-%0*d.txt" "$placeholder_length" "$number"
+number_of_commits="$(git rev-list --all --count)"
 
-    [[ -f "$filename" ]] || break
-  done
+for ((commit = 0; commit < commit_count; commit++)); do
+  filename="$(get-filename $((number_of_commits + commit)))"
 
   # Create file.
   printf 'contents for %s\n' "$filename" > "$filename"
