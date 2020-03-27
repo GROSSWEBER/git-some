@@ -29,6 +29,30 @@ $ ./install
 
 `install` will set up the `git some` alias for you.
 
+## Git training attendees
+
+It is useful to have some aliases ready save some typing:
+
+### git gl
+
+`git gl` displays the whole graph.
+
+```sh
+git config --global alias.gl 'log --oneline --graph --all'
+```
+
+### git diverged
+
+`git diverged` creates the graph that we mostly use as a base for our
+discussion. It looks like [the one below](#Example).
+
+```sh
+git config --global alias.diverged '!git init && git some 2 && git checkout -b topic && git some 3 && git checkout - && git some'
+```
+
+I'm not using `git switch` here because you might have an older Git client (<
+2.23) that only supports `git checkout`.
+
 ## Example
 
 ```sh
