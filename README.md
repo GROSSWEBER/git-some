@@ -63,10 +63,10 @@ $ cd git-some-test
 $ git init
 Initialized empty Git repository in <somewhere>/git-some-test/.git/
 
-$ git some 2 && \
-  git checkout -b topic && \
-  git some 3 && \
-  git checkout - && \
+$ git some 2 &&
+  git checkout -b topic &&
+  git some 3 &&
+  git checkout - &&
   git-some
 [master (root-commit) c540e60] master: A.txt
 ...
