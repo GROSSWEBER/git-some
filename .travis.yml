@@ -14,6 +14,7 @@ script: >-
                 ./tests.bats'
 
 env:
+  - _BASH_VERSION=3.2
   - _BASH_VERSION=4.3
   - _BASH_VERSION=4.4
   - _BASH_VERSION=5

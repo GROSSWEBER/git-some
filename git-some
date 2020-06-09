@@ -65,7 +65,7 @@ done
 
 number-to-string() {
   local num="${1?Need number}"
-  local chars=({A..Z})
+  local chars=(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
   local base=${#chars[@]}
   local stack=()
   local index
@@ -98,7 +98,7 @@ get-filename() {
   printf '%s' "$filename"
 }
 
-if [[ ! -v message ]]; then
+if [[ -z "${message:-}" ]]; then
   message="$(git symbolic-ref --quiet --short HEAD || printf 'detached HEAD')"
 fi
 
